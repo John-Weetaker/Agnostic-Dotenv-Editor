@@ -1,7 +1,5 @@
 <?php namespace Jackiedo\DotenvEditor;
 
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Config\Repository as Config;
 use Jackiedo\DotenvEditor\Exceptions\FileNotFoundException;
 use Jackiedo\DotenvEditor\Exceptions\KeyNotFoundException;
 use Jackiedo\DotenvEditor\Exceptions\NoBackupAvailableException;
@@ -14,20 +12,6 @@ use Jackiedo\DotenvEditor\Exceptions\NoBackupAvailableException;
  */
 class DotenvEditor
 {
-    /**
-     * The IoC Container
-     *
-     * @var \Illuminate\Container\Container
-     */
-    protected $app;
-
-    /**
-     * Store instance of Config Repository;
-     *
-     * @var \Illuminate\Config\Repository
-     */
-    protected $config;
-
     /**
      * The formatter instance
      *
@@ -80,23 +64,17 @@ class DotenvEditor
      */
     const BACKUP_FILENAME_SUFFIX = '';
 
-    /**
-     * Create a new DotenvEditor instance
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $app
-     * @param  \Illuminate\Contracts\Config\Repository    $config
-     *
+    /**     *
      * @return void
      */
-    public function __construct(Container $app, Config $config)
+    public function __construct()
     {
-        $this->app       = $app;
-        $this->config    = $config;
         $this->formatter = new DotenvFormatter;
         $this->reader    = new DotenvReader($this->formatter);
         $this->writer    = new DotenvWriter($this->formatter);
 
-        $backupPath = $this->config->get('dotenv-editor.backupPath');
+        // TODO provide a way to set path
+        $backupPath = null;
 
         if (is_null($backupPath)) {
             if (function_exists('base_path')) {
